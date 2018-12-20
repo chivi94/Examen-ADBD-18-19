@@ -8,8 +8,11 @@ Por motivos de formato en moodle, las claves primarias aparecen en negrita y las
 Los datos que se cargan en el script son orientativos y en el examen podría haber alguna modificación de los datos (no del esquema)
 Esquema: claves primarias en negrita; foráneas en cursiva apuntando a las primarias con la misma denominación
 Restricciones: fechaI < fechaF;  una concesión es activa cuando es nula la fechaF; tipo es un string enumerado de posibles valores 'FRU', 'ALI', 'CAR', 'ELE', 'ULT'
-Puesto (**nro**, dimension)               Titular(**dni**, nombre)
 
-Concesion(**cod**, fechaI, fechaF, tipo, *nro*, *dni*)
+- Puesto (**nro**, dimension)               
 
-Sancion(**ref**, fecha, cantidad, *cod*)
+- Titular(**dni**, nombre)
+
+- Concesion(**cod**, fechaI, fechaF, tipo, *nro*, *dni*)
+
+- Sancion(**ref**, fecha, cantidad, *cod*)
