@@ -108,6 +108,15 @@ WHERE
 		FROM SancionesPuesto SP2
 	)
 ;
-
+							 
+-- 10 --
+WITH NPuestosTit AS( SELECT C.dni, COUNT(DISTINCT C.nro) as npt
+  		     FROM Concesion C, Puesto P 
+ 		     WHERE C.nro=P.nro
+                     GROUP BY C.dni)
+SELECT T.nombre,NP.npt
+FROM Titular T, NPuestosTit NP
+WHERE T.dni=NP.dni AND NP.npt >=ALL(SELECT NP2.npt
+    				    FROM NPuestosTit NP2);							 
 
 
