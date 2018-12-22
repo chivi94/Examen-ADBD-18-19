@@ -81,7 +81,33 @@ FROM titular T NATURAL JOIN NumInf NI;
     FROM Concesion C, Titular T 
     WHERE C.dni = T.dni 
     ORDER BY C.nro DESC, C.fechaI ASC;
+                                                         
+-- 8 --
+SELECT T.nombre,COUNT(*) AS num_sanciones
+FROM Titular T
+	JOIN Concesion C ON T.dni = C.dni
+	JOIN Sancion S ON C.cod = S.cod
+WHERE
+	'2011-12-31' >= S.fecha AND
+	'2011-01-01' <= S.fecha
+GROUP BY T.nombre;
 
+-- 9 --
+WITH SancionesPuesto AS (
+	SELECT P.nro,COUNT(*) as num_sanciones
+	FROM Puesto P
+		NATURAL JOIN Concesion
+		NATURAL JOIN Sancion
+	GROUP BY P.nro
+)
+SELECT SP.nro, SP.num_sanciones
+FROM SancionesPuesto SP
+WHERE
+	SP.num_sanciones >= ALL(
+		SELECT SP2.num_sanciones
+		FROM SancionesPuesto SP2
+	)
+;
 
 
 
