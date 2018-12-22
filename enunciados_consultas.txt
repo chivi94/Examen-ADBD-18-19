@@ -12,4 +12,8 @@
 6 -- Los 5 titulares actuales (nombre) con más sanciones.
 
 7 -- Historial de todos los puestos(nro, fechaI, fechaF, nombre_titular) ordenado en orden descendente por número de Puesto
-     y en orden ascendente por fechaI ( los puestos están numerados del 1 al 10)
+     y en orden ascendente por fechaI ( los puestos están numerados del 1 al 10).
+     
+8 -- Titulares con sancion en el año 2011.
+
+9 -- Puesto con mas sanciones.
