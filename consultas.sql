@@ -28,20 +28,21 @@ FROM titular T NATURAL JOIN NumInf NI;
 
 
 -- 5 -- 
-    -- * Planteamiento 
+WITH sancionesActualesTitular AS(
+    SELECT T.dni, COUNT(*) AS numSanciones
+    FROM Titular T, Concesion C, Sancion S
+    WHERE T.dni = C.dni AND
+          C.cod = S.cod AND
+          C.fechaF IS NULL
+    GROUP BY T.dni
+)
 
-        -- concActivasLimpias : Concesiones con fechaF IS null  y cod NOT IN Sancion.cod
-        -- Nombre del Titular con dni IN concActivasLimpias.dni
-
-    -- * SQL 
-
-    WITH ConcActivasLimpias AS ( SELECT C.dni 
-                                 FROM Concesion C
-                                 WHERE C.fechaF IS null 
-                                       AND C.cod NOT IN (SELECT S.cod FROM Sancion S))
-    
-    SELECT T.nombre
-    FROM Titular T natural join ConcActivasLimpias CAL;
+SELECT T.nombre
+FROM Titular T, Concesion C
+WHERE T.dni NOT IN (SELECT ST.dni
+                       FROM sancionesActualesTitular ST) AND
+      T.dni = C.dni AND
+      C.fechaF IS NULL;
 
 -- 6 --
     -- * Planteamiento
@@ -117,6 +118,77 @@ WITH NPuestosTit AS( SELECT C.dni, COUNT(DISTINCT C.nro) as npt
 SELECT T.nombre,NP.npt
 FROM Titular T, NPuestosTit NP
 WHERE T.dni=NP.dni AND NP.npt >=ALL(SELECT NP2.npt
-    				    FROM NPuestosTit NP2);							 
+    				    FROM NPuestosTit NP2);
+
+-- 11 --
+WITH duracionConcesion AS(
+    SELECT C.cod, C.dni, C.fechaF - C.fechaI AS duracion
+    FROM Concesion C
+)
+SELECT T.nombre, DC.duracion
+FROM Titular T, duracionConcesion DC
+WHERE T.dni = DC.dni AND
+      DC IS NOT NULL AND
+      5 > (SELECT COUNT(*)
+           FROM duracionConcesion DC2
+           WHERE DC2.duracion > DC.duracion);
+
+-- 12 --
+SELECT T.nombre, S.ref, S.fecha
+FROM Titular T, Concesion C, Sancion S
+WHERE T.dni = C.dni AND
+      C.cod = S.cod AND
+      S.fecha >= DATE('2000-1-1') AND
+      S.fecha < DATE('2011-1-1')
+ORDER BY S.fecha;
+
+-- 13 --
+WITH sancionesTitular AS(
+    SELECT T.dni, COUNT(*) AS numSanciones
+    FROM Titular T, Concesion C, Sancion S
+    WHERE T.dni = C.dni AND
+          C.cod = S.cod
+    GROUP BY T.dni
+)
+
+SELECT T.nombre
+FROM Titular T
+WHERE T.dni NOT IN (SELECT ST.dni
+                       FROM sancionesTitular ST);
+
+-- 14 --
+WITH sancionesTitularCantidades AS(
+    SELECT T.dni, S.cantidad
+    FROM Titular T, Concesion C, Sancion S
+    WHERE T.dni = C.dni AND
+          C.cod = S.cod
+)
+
+SELECT T.nombre, SUM(STC.cantidad)
+FROM Titular T, sancionesTitularCantidades STC
+WHERE T.dni = STC.dni
+GROUP BY T.dni;
+
+-- 15 --
+WITH sancionesTitularCantidades AS(
+    SELECT T.dni, S.cantidad
+    FROM Titular T, Concesion C, Sancion S
+    WHERE T.dni = C.dni AND
+          C.cod = S.cod
+)
+
+SELECT T.nombre, AVG(STC.cantidad)
+FROM Titular T, sancionesTitularCantidades STC
+WHERE T.dni = STC.dni
+GROUP BY T.dni;
+
+-- 16 --
+SELECT C.cod, C.fechaF - C.fechaI AS Duracion
+FROM Concesion C
+WHERE C.fechaF - C.fechaI = (SELECT MAX(C2.fechaF - C2.fechaI)
+                             FROM Concesion C2);
+
+
+
 
 
