@@ -7,7 +7,7 @@
 
 4 -- Número de licencias que ha tenido cada puesto, sin incluir las activas.
 
-5 -- Tiular (nombre) actuales sin ninguna sanción.
+5 -- Titulares (nombre) actuales sin ninguna sanción.
 
 6 -- Los 5 titulares actuales (nombre) con más sanciones.
 
@@ -19,3 +19,15 @@
 9 -- Puesto con mas sanciones.
 
 10 -- Titular(es) que más puestos distintos han tenido.
+
+11 -- 5 Concesiones finalizadas más largas y titular de cada una
+
+12 -- Sanciones entre 2000 y 2010 con el nombre del titular, ref de la sanción, y fecha 
+
+13 -- Titulares sin ninguna sanción
+
+14 -- Cantidad total pagada en sanciones por cada titular
+
+15 -- Cantidad media pagada en sanciones por cada titular
+
+16 -- Concesión o concesiones más largas
