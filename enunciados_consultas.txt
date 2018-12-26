@@ -31,3 +31,5 @@
 15 -- Cantidad media pagada en sanciones por cada titular
 
 16 -- Concesión o concesiones más largas
+
+17 -- Persona/s (dni, nombre) que al menos han tenido 2 infracciones
