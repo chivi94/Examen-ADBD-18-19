@@ -15,17 +15,8 @@ FROM puesto P NATURAL JOIN concesion C
 GROUP BY P.nro;
 
 -- 4 --
-    --Habría que añadir la siguiente cláusula
-    -- WHERE c.fechaF IS NOT NULL
-    -- Persona/s (dni, nombre) que al menos han tenido 2 infracciones
-WITH NumInf AS (SELECT DISTINCT C.dni AS dni, COUNT(*) as numI
-                FROM concesion C NATURAL JOIN sancion S
-                GROUP BY C.dni
-                HAVING COUNT(*)>2)
-                
-SELECT T.nombre, NI.dni,NI.numI
-FROM titular T NATURAL JOIN NumInf NI;
-
+--Habría que añadir la siguiente cláusula
+-- WHERE c.fechaF IS NOT NULL
 
 -- 5 -- 
 WITH sancionesActualesTitular AS(
@@ -187,7 +178,15 @@ SELECT C.cod, C.fechaF - C.fechaI AS Duracion
 FROM Concesion C
 WHERE C.fechaF - C.fechaI = (SELECT MAX(C2.fechaF - C2.fechaI)
                              FROM Concesion C2);
-
+			     
+-- 17 -- 
+WITH NumInf AS (SELECT DISTINCT C.dni AS dni, COUNT(*) as numI
+                FROM concesion C NATURAL JOIN sancion S
+                GROUP BY C.dni
+                HAVING COUNT(*)>2)
+                
+SELECT T.nombre, NI.dni,NI.numI
+FROM titular T NATURAL JOIN NumInf NI;
 
 
 
