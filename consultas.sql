@@ -60,6 +60,22 @@ WHERE T.dni NOT IN (SELECT ST.dni
     WHERE 5 > (SELECT COUNT(*)
                FROM Nsanciones Ns2
                WHERE Ns2.nsan > Ns.nsan);
+	       
+-- 6 otra version --
+    WITH sancionesTitular AS(
+        SELECT T.nombre, COUNT(*) as numS 
+	FROM titular T
+	    NATURAL JOIN concesion C
+	    NATURAL JOIN sancion S
+	WHERE C.fechaf IS NULL
+	GROUP BY T.nombre
+	ORDER BY numS DESC
+    )
+
+    SELECT st.nombre, st.numS FROM sancionesTitular st
+    WHERE 5 > (SELECT COUNT(*) 
+               FROM sancionesTitular st2
+               WHERE st2.numS > st.numS);
 
 -- 7 --
     --* Planteamiento 
