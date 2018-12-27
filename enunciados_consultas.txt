@@ -32,4 +32,13 @@
 
 16 -- Concesión o concesiones más largas
 
-17 -- Persona/s (dni, nombre) que al menos han tenido 2 infracciones
+17 -- Persona/s (dni, nombre) que al menos han tenido 2 infracciones.
+ 
+18 -- Tipo de puesto y numero del que hay un mayor número actualmente.
+      Los tipos de puesto son: FRU', 'ALI', 'CAR', 'ELE' ó 'ULT'.
+
+19 -- Tipo puesto, numero, porcentaje del total ( sólo los puestos actuales).
+     Los tipos de puesto son: FRU', 'ALI', 'CAR', 'ELE' ó 'ULT'.
+
+20 -- Tipo de puesto, numero y porcentaje del que hay un mayor número actualmente.
+      Los tipos de puesto son: FRU', 'ALI', 'CAR', 'ELE' ó 'ULT'.

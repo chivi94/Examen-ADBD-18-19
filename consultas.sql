@@ -15,8 +15,9 @@ FROM puesto P NATURAL JOIN concesion C
 GROUP BY P.nro;
 
 -- 4 --
---Habría que añadir la siguiente cláusula
--- WHERE c.fechaF IS NOT NULL
+
+    --Habría que añadir la siguiente cláusula
+    -- WHERE c.fechaF IS NOT NULL
 
 -- 5 -- 
 WITH sancionesActualesTitular AS(
@@ -186,8 +187,7 @@ SELECT C.cod, C.fechaF - C.fechaI AS Duracion
 FROM Concesion C
 WHERE C.fechaF - C.fechaI = (SELECT MAX(C2.fechaF - C2.fechaI)
                              FROM Concesion C2);
-			     
--- 17 -- 
+-- 17 --
 WITH NumInf AS (SELECT DISTINCT C.dni AS dni, COUNT(*) as numI
                 FROM concesion C NATURAL JOIN sancion S
                 GROUP BY C.dni
@@ -195,6 +195,62 @@ WITH NumInf AS (SELECT DISTINCT C.dni AS dni, COUNT(*) as numI
                 
 SELECT T.nombre, NI.dni,NI.numI
 FROM titular T NATURAL JOIN NumInf NI;
+
+
+-- 18 --
+-- Planteamiento 
+    -- Al utilizar las concesiones no se tienen en cuenta los puestos vacíos.
+    -- Sólo actuales -> fechaF IS NULL
+    -- Tabla TipoPuestos : tipo | np_actuales 
+    -- Maximo -> dos roles de TipoPuestos,  TP1.np_actuales >=ALL TP2.np_actuales
+
+-- SQL 
+
+WITH TipoPuestos  AS (SELECT C.tipo, COUNT(*) AS np_actuales
+                        FROM Concesion C
+                        WHERE C.fechaF IS NULL
+                        GROUP BY C.tipo)
+                    
+SELECT TP.tipo, TP.np_actuales
+FROM TipoPuestos TP
+WHERE TP.np_actuales >=ALL(SELECT TP2.np_actuales FROM TipoPuestos TP2);
+
+
+--19 --
+--Planteamiento 
+    -- Al utilizar las concesiones no se tienen en cuenta los puestos vacíos.
+    -- Sólo actuales -> fechaF IS NULL
+    -- Porcentaje -> (subconsulta) np_actuales * 100 / COUNT(Concesion.tipo)  WHERE fechaF IS NULL
+
+-- SQL 
+SELECT C.tipo, COUNT(*) AS np_actuales, ( SELECT COUNT(C.tipo) * 100 / COUNT(C2.tipo) 
+                                          FROM Concesion C2 
+                                          WHERE C2.fechaF IS NULL) AS porcentaje
+FROM Concesion C
+WHERE C.fechaF IS NULL
+GROUP BY C.tipo;
+
+-- 20 -- 
+-- Planteamiento 
+    -- Al utilizar las concesiones no se tienen en cuenta los puestos vacíos.
+    -- Sólo actuales -> fechaF IS NULL
+    -- Tabla TipoPuestos : tipo | np_actuales | porcentaje 
+    -- Maximo -> dos roles de TipoPuestos,  TP1.np_actuales >=ALL TP2.np_actuales
+
+-- SQL 
+
+WITH TipoPuestos  AS (SELECT C.tipo, COUNT(*) AS np_actuales, 
+                        ( SELECT COUNT(C.tipo) * 100 / COUNT(C2.tipo) 
+                        FROM Concesion C2 
+                        WHERE C2.fechaF IS NULL) AS porcentaje
+                        FROM Concesion C
+                        WHERE C.fechaF IS NULL
+                        GROUP BY C.tipo)
+                    
+SELECT TP.tipo, TP.np_actuales, Tp.porcentaje
+FROM TipoPuestos TP
+WHERE TP.np_actuales >=ALL(SELECT TP2.np_actuales FROM TipoPuestos TP2);
+
 
 
 
