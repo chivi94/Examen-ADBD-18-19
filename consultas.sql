@@ -1,5 +1,5 @@
 --  1 --
-SELECT T.nombre
+SELECT DISTINCT T.nombre
 FROM titular T NATURAL JOIN concesion C
 WHERE C.fechaF IS NULL;
 
