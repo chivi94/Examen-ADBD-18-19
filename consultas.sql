@@ -4,7 +4,7 @@ FROM titular T NATURAL JOIN concesion C
 WHERE C.fechaF IS NULL;
 
 -- 2 --
-SELECT DISTINCT P.nro,C.dni,C.fechaI,C.fechaF
+SELECT P.nro,C.dni,C.fechaI,C.fechaF
 FROM puesto P NATURAL JOIN concesion C
 WHERE P.nro = 2
 ORDER BY C.fechaI ASC;
