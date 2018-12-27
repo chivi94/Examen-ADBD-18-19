@@ -168,7 +168,7 @@ WITH sancionesTitularCantidades AS(
           C.cod = S.cod
 )
 
-SELECT T.nombre,SUM(STC.cantidad), AVG(STC.cantidad)
+SELECT T.nombre, AVG(STC.cantidad)
 FROM Titular T, sancionesTitularCantidades STC
 WHERE T.dni = STC.dni
 GROUP BY T.dni;
