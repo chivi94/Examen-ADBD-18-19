@@ -1,18 +1,18 @@
 --  1 --
-SELECT T.nombre
+SELECT DISTINCT T.nombre
 FROM titular T NATURAL JOIN concesion C
 WHERE C.fechaF IS NULL;
 
 -- 2 --
-SELECT DISTINCT P.nro,C.dni,C.fechaI,C.fechaF
-FROM puesto P NATURAL JOIN concesion C
-WHERE P.nro = 2
+SELECT C.nro,C.dni,C.fechaI,C.fechaF
+FROM concesion C
+WHERE C.nro = 2
 ORDER BY C.fechaI ASC;
 
 -- 3 -- 
-SELECT P.nro, COUNT(*) AS numL
-FROM puesto P NATURAL JOIN concesion C
-GROUP BY P.nro;
+SELECT C.nro, COUNT(*) AS numL
+FROM concesion C
+GROUP BY C.nro;
 
 -- 4 --
 
