@@ -84,6 +84,17 @@ WHERE
 	'2011-01-01' <= S.fecha
 GROUP BY T.nombre;
 
+-- Otra opción, sin el nombre del titular --
+SELECT C.dni, S.ref, S.fecha,S.cantidad
+FROM concesion C NATURAL JOIN sancion S
+WHERE EXTRACT(YEAR FROM S.fecha) = 2011;
+
+-- Con el nombre --
+SELECT T.nombre,C.dni, S.ref, S.fecha,S.cantidad
+FROM titular T, concesion C, sancion S
+WHERE T.dni = C.dni AND C.cod = S.cod AND
+      EXTRACT(YEAR FROM S.fecha) = 2011;
+
 -- 9 --
 WITH SancionesPuesto AS (
 	SELECT P.nro,COUNT(*) as num_sanciones
