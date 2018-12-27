@@ -10,9 +10,9 @@ WHERE C.nro = 2
 ORDER BY C.fechaI ASC;
 
 -- 3 -- 
-SELECT P.nro, COUNT(*) AS numL
-FROM puesto P NATURAL JOIN concesion C
-GROUP BY P.nro;
+SELECT C.nro, COUNT(*) AS numL
+FROM concesion C
+GROUP BY C.nro;
 
 -- 4 --
 
