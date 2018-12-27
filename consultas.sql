@@ -97,11 +97,9 @@ WHERE T.dni = C.dni AND C.cod = S.cod AND
 
 -- 9 --
 WITH SancionesPuesto AS (
-	SELECT P.nro,COUNT(*) as num_sanciones
-	FROM Puesto P
-		NATURAL JOIN Concesion
-		NATURAL JOIN Sancion
-	GROUP BY P.nro
+	SELECT C.nro,COUNT(*) as num_sanciones
+	FROM concesion C NATURAL JOIN sancion S
+	GROUP BY C.nro
 )
 SELECT SP.nro, SP.num_sanciones
 FROM SancionesPuesto SP
