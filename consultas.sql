@@ -15,6 +15,7 @@ FROM puesto P NATURAL JOIN concesion C
 GROUP BY P.nro;
 
 -- 4 --
+
     --Habría que añadir la siguiente cláusula
     -- WHERE c.fechaF IS NOT NULL
 
@@ -84,13 +85,22 @@ WHERE
 	'2011-01-01' <= S.fecha
 GROUP BY T.nombre;
 
+-- Otra opción, sin el nombre del titular --
+SELECT C.dni, S.ref, S.fecha,S.cantidad
+FROM concesion C NATURAL JOIN sancion S
+WHERE EXTRACT(YEAR FROM S.fecha) = 2011;
+
+-- Con el nombre --
+SELECT T.nombre,C.dni, S.ref, S.fecha,S.cantidad
+FROM titular T, concesion C, sancion S
+WHERE T.dni = C.dni AND C.cod = S.cod AND
+      EXTRACT(YEAR FROM S.fecha) = 2011;
+
 -- 9 --
 WITH SancionesPuesto AS (
-	SELECT P.nro,COUNT(*) as num_sanciones
-	FROM Puesto P
-		NATURAL JOIN Concesion
-		NATURAL JOIN Sancion
-	GROUP BY P.nro
+	SELECT C.nro,COUNT(*) as num_sanciones
+	FROM concesion C NATURAL JOIN sancion S
+	GROUP BY C.nro
 )
 SELECT SP.nro, SP.num_sanciones
 FROM SancionesPuesto SP
@@ -103,8 +113,7 @@ WHERE
 							 
 -- 10 --
 WITH NPuestosTit AS( SELECT C.dni, COUNT(DISTINCT C.nro) as npt
-  		     FROM Concesion C, Puesto P 
- 		     WHERE C.nro=P.nro
+  		     FROM Concesion C
                      GROUP BY C.dni)
 SELECT T.nombre,NP.npt
 FROM Titular T, NPuestosTit NP
@@ -178,7 +187,6 @@ SELECT C.cod, C.fechaF - C.fechaI AS Duracion
 FROM Concesion C
 WHERE C.fechaF - C.fechaI = (SELECT MAX(C2.fechaF - C2.fechaI)
                              FROM Concesion C2);
-
 -- 17 --
 WITH NumInf AS (SELECT DISTINCT C.dni AS dni, COUNT(*) as numI
                 FROM concesion C NATURAL JOIN sancion S
@@ -187,6 +195,7 @@ WITH NumInf AS (SELECT DISTINCT C.dni AS dni, COUNT(*) as numI
                 
 SELECT T.nombre, NI.dni,NI.numI
 FROM titular T NATURAL JOIN NumInf NI;
+
 
 -- 18 --
 -- Planteamiento 
@@ -241,7 +250,6 @@ WITH TipoPuestos  AS (SELECT C.tipo, COUNT(*) AS np_actuales,
 SELECT TP.tipo, TP.np_actuales, Tp.porcentaje
 FROM TipoPuestos TP
 WHERE TP.np_actuales >=ALL(SELECT TP2.np_actuales FROM TipoPuestos TP2);
-
 
 
 
