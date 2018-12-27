@@ -112,8 +112,7 @@ WHERE
 							 
 -- 10 --
 WITH NPuestosTit AS( SELECT C.dni, COUNT(DISTINCT C.nro) as npt
-  		     FROM Concesion C, Puesto P 
- 		     WHERE C.nro=P.nro
+  		     FROM Concesion C
                      GROUP BY C.dni)
 SELECT T.nombre,NP.npt
 FROM Titular T, NPuestosTit NP
