@@ -252,6 +252,28 @@ FROM TipoPuestos TP
 WHERE TP.np_actuales >=ALL(SELECT TP2.np_actuales FROM TipoPuestos TP2);
 
 
+-- 21 --
+-- Planteamiento 
+        -- Sólo hace falta la tabla de Concesion
+        -- Tabla DuracionConcesiones: nro | duracion (fruteria) (si fechaF IS NULL -> fechaf = CURRENT_DATE)
+        -- SUM(duracion), GRUOP BY nro -> Tabla DuracionPuestos 
+        -- MAXIMO de DuracionPuestos
 
+-- SQL 
+
+WITH  DuracionConcesiones AS (SELECT C.nro, (fechaF-fechaI) as duracion_dias
+                                FROM Concesion C 
+                                WHERE C.fechaF IS NOT NULL AND C.tipo = 'FRU'
+                                UNION 
+                                SELECT C.nro, (CURRENT_DATE-fechaI) as duracion_dias
+                                FROM Concesion C 
+                                WHERE C.fechaF IS  NULL AND C.tipo = 'FRU'),
+
+        DuracionPuestos AS ( SELECT DC.nro, SUM(DC.duracion_dias) AS duracion_dias
+                            FROM DuracionConcesiones DC
+                            GROUP BY DC.nro)
+SELECT DP.nro
+FROM DuracionPuestos DP 
+WHERE DP.duracion_dias >=ALL (SELECT DP2.duracion_dias FROM DuracionPuestos DP2);
 
 

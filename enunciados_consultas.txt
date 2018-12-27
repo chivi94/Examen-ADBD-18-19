@@ -42,3 +42,5 @@
 
 20 -- Tipo de puesto, numero y porcentaje del que hay un mayor número actualmente.
       Los tipos de puesto son: FRU', 'ALI', 'CAR', 'ELE' ó 'ULT'.
+
+21 -- Puesto (nro) que más tiempo ha sido una frutería ('FRU') en toda la historia del mercado.
