@@ -61,6 +61,22 @@ WHERE T.dni NOT IN (SELECT ST.dni
                FROM Nsanciones Ns2
                WHERE Ns2.nsan > Ns.nsan);
 
+-- 6 otra version --
+    WITH sancionesTitular AS(
+        SELECT T.nombre, COUNT(*) as numS 
+        FROM titular T
+            NATURAL JOIN concesion C
+            NATURAL JOIN sancion S
+        WHERE C.fechaf IS NULL
+        GROUP BY T.dni
+        ORDER BY numS DESC
+    )
+
+    SELECT ST.nombre, ST.numS FROM sancionesTitular ST
+    WHERE 5 > (SELECT COUNT(*) 
+        FROM sancionesTitular ST2
+        WHERE ST2.numS > ST.numS);
+
 -- 7 --
     --* Planteamiento 
 
@@ -157,30 +173,18 @@ WHERE T.dni NOT IN (SELECT ST.dni
                        FROM sancionesTitular ST);
 
 -- 14 --
-WITH sancionesTitularCantidades AS(
-    SELECT T.dni, S.cantidad
-    FROM Titular T, Concesion C, Sancion S
-    WHERE T.dni = C.dni AND
-          C.cod = S.cod
-)
-
-SELECT T.nombre, SUM(STC.cantidad)
-FROM Titular T, sancionesTitularCantidades STC
-WHERE T.dni = STC.dni
-GROUP BY T.dni;
+SELECT T.nombre, SUM(S.cantidad) as total
+FROM titular T, concesion C, sancion S
+WHERE T.dni = C.dni AND C.cod = S.cod
+GROUP BY T.dni
+ORDER BY total DESC;
 
 -- 15 --
-WITH sancionesTitularCantidades AS(
-    SELECT T.dni, S.cantidad
-    FROM Titular T, Concesion C, Sancion S
-    WHERE T.dni = C.dni AND
-          C.cod = S.cod
-)
-
-SELECT T.nombre, AVG(STC.cantidad)
-FROM Titular T, sancionesTitularCantidades STC
-WHERE T.dni = STC.dni
-GROUP BY T.dni;
+SELECT T.nombre, AVG(S.cantidad) as media
+FROM titular T, concesion C, sancion S
+WHERE T.dni = C.dni AND C.cod = S.cod
+GROUP BY T.dni
+ORDER BY media DESC;
 
 -- 16 --
 SELECT C.cod, C.fechaF - C.fechaI AS Duracion
@@ -191,7 +195,7 @@ WHERE C.fechaF - C.fechaI = (SELECT MAX(C2.fechaF - C2.fechaI)
 WITH NumInf AS (SELECT DISTINCT C.dni AS dni, COUNT(*) as numI
                 FROM concesion C NATURAL JOIN sancion S
                 GROUP BY C.dni
-                HAVING COUNT(*)>2)
+                HAVING COUNT(*)>=2)
                 
 SELECT T.nombre, NI.dni,NI.numI
 FROM titular T NATURAL JOIN NumInf NI;
