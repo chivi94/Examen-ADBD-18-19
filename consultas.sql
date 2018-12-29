@@ -35,6 +35,14 @@ WHERE T.dni NOT IN (SELECT ST.dni
                        FROM sancionesActualesTitular ST) AND
       T.dni = C.dni AND
       C.fechaF IS NULL;
+      
+-- Otra forma --
+SELECT DISTINCT T.nombre
+FROM Concesion C, Titular T
+WHERE C.dni=T.dni AND C.fechaF IS NULL AND NOT EXISTS (
+  SELECT *
+  FROM Sancion S
+  WHERE S.cod=C.cod);
 
 -- 6 --
     -- * Planteamiento
@@ -279,5 +287,16 @@ WITH  DuracionConcesiones AS (SELECT C.nro, (fechaF-fechaI) as duracion_dias
 SELECT DP.nro
 FROM DuracionPuestos DP 
 WHERE DP.duracion_dias >=ALL (SELECT DP2.duracion_dias FROM DuracionPuestos DP2);
+
+-- 22 --
+with CAct as(
+    select C.cod,C.FechaF,C.tipo
+      from Concesion C where C.fechaF is null)
+select N.tipo, N.cant*100/T.tot
+from (select CA.tipo, count(*) as cant
+      from CAct CA
+      group by CA.tipo) N,
+     (select count(*) as tot
+  from CAct CA) T;
 
 
