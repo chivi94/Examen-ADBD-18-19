@@ -44,3 +44,5 @@
       Los tipos de puesto son: FRU', 'ALI', 'CAR', 'ELE' ó 'ULT'.
 
 21 -- Puesto (nro) que más tiempo ha sido una frutería ('FRU') en toda la historia del mercado.
+
+22 -- Calcular el porcentaje de concesiones de cada tipo frente al total de concesiones totales actuales.
