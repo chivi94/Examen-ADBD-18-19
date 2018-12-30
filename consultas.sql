@@ -43,6 +43,12 @@ WHERE C.dni=T.dni AND C.fechaF IS NULL AND NOT EXISTS (
   SELECT *
   FROM Sancion S
   WHERE S.cod=C.cod);
+  
+-- Otra forma --
+SELECT DISTINCT t.dni, t.nombre
+FROM Concesion c NATURAL JOIN Titular t
+WHERE c.fechaf IS NULL AND c.cod NOT IN (SELECT s.cod 
+					 FROM Sancion s);
 
 -- 6 --
     -- * Planteamiento
