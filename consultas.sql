@@ -44,6 +44,7 @@ WHERE C.dni=T.dni AND C.fechaF IS NULL AND NOT EXISTS (
   FROM Sancion S
   WHERE S.cod=C.cod);
   
+  
 -- Otra forma --
 SELECT DISTINCT t.dni, t.nombre
 FROM Concesion c NATURAL JOIN Titular t
@@ -93,7 +94,6 @@ WHERE c.fechaf IS NULL AND c.cod NOT IN (SELECT s.cod
 
 -- 7 --
     --* Planteamiento 
-
         -- SELECT C.nro, C.fechaI, C.fechaF, T.nombre 
         -- C.dni = T.dni
         -- ORDER BY C.nro DESC, C.fechaI ASC
@@ -258,7 +258,7 @@ GROUP BY C.tipo;
 -- SQL 
 
 WITH TipoPuestos  AS (SELECT C.tipo, COUNT(*) AS np_actuales, 
-                        ( SELECT COUNT(C.tipo) * 100 / COUNT(C2.tipo) 
+                        ( SELECT COUNT(C.tipo) * 100.00 / COUNT(C2.tipo) 
                         FROM Concesion C2 
                         WHERE C2.fechaF IS NULL) AS porcentaje
                         FROM Concesion C
@@ -272,10 +272,10 @@ WHERE TP.np_actuales >=ALL(SELECT TP2.np_actuales FROM TipoPuestos TP2);
 
 -- 21 --
 -- Planteamiento 
-        -- Sólo hace falta la tabla de Concesion
-        -- Tabla DuracionConcesiones: nro | duracion (fruteria) (si fechaF IS NULL -> fechaf = CURRENT_DATE)
-        -- SUM(duracion), GRUOP BY nro -> Tabla DuracionPuestos 
-        -- MAXIMO de DuracionPuestos
+    -- Sólo hace falta la tabla de Concesion
+    -- Tabla DuracionConcesiones: nro | duracion (fruteria) (si fechaF IS NULL -> fechaf = CURRENT_DATE)
+    -- SUM(duracion), GRUOP BY nro -> Tabla DuracionPuestos 
+    -- MAXIMO de DuracionPuestos
 
 -- SQL 
 
@@ -295,14 +295,62 @@ FROM DuracionPuestos DP
 WHERE DP.duracion_dias >=ALL (SELECT DP2.duracion_dias FROM DuracionPuestos DP2);
 
 -- 22 --
-with CAct as(
-    select C.cod,C.FechaF,C.tipo
-      from Concesion C where C.fechaF is null)
-select N.tipo, N.cant*100/T.tot
+with CAct as( select C.cod, C.FechaF, C.tipo
+              from Concesion C 
+              where C.fechaF is null)
+
+select N.tipo, N.cant*100.00/T.tot
 from (select CA.tipo, count(*) as cant
       from CAct CA
       group by CA.tipo) N,
      (select count(*) as tot
   from CAct CA) T;
 
+-- Otra forma -- 
 
+ -- Planteamiento 
+    -- fechaF is NULL
+    -- Tabla Ntipos : tipo | nactuales 
+    -- SELECT tipo, n_actuales * 100.00/ COUNT(concesiones actuales)
+    
+-- SQL 
+
+WITH Ntipos AS ( SELECT DISTINCT C.tipo, COUNT(*) as nactuales
+                FROM Concesion C 
+                WHERE C.fechaF IS NULL 
+                GROUP BY C.tipo)
+
+SELECT N.tipo, N.nactuales * 100.00 / (SELECT COUNT(*) FROM Concesion C2 WHERE C2.fechaF is null) AS porcentaje
+FROM Ntipos N;
+
+-- 23 --
+-- Planteamiento 
+    -- COUNT(*), GRUOP BY year -> Tabla: year | nsanciones   con 2000 <= año <= 2010
+    -- tasa = nsan / COUNT(*) Puesto ->  Tabla: year | tasa
+
+--SQL 
+
+WITH YearSanciones AS ( SELECT extract(year from S.fecha) as year, COUNT(*) as nsanciones
+                        FROM Sancion S 
+                        WHERE extract(year from S.fecha) >= 2000 AND extract(year from S.fecha) <= 2010
+                        GROUP BY extract(year from S.fecha) )
+
+SELECT YS.year, YS.nsanciones *1.00 / (SELECT COUNT(*) FROM Puesto P) as tasa
+FROM YearSanciones YS;
+
+-- 24 --
+
+--Planteamiento 
+    -- De las tablas base sólo es necesaria Concesion. 
+    -- COUNT(DISTINCT Concesion.tipo), GROUP BY Concesion.tipo  -> Tabla NumTiposPuesto: nro | ntipos 
+    -- Seleccionar las tuplas de NumTiposPuesto cuyo campo ntipos sea >= que todas las tuplas de NumTiposPuesto 
+
+--SQL 
+
+WITH NumTiposPuesto AS (SELECT C.nro, COUNT(DISTINCT C.tipo) as ntipos
+                        FROM Concesion C
+                        GROUP BY C.nro ) 
+
+SELECT NTP.nro, NTP.ntipos
+FROM NumTiposPuesto NTP 
+WHERE NTP.ntipos >=ALL (SELECT NTP2.ntipos FROM NumTiposPuesto NTP2);

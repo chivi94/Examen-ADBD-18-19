@@ -45,4 +45,8 @@
 
 21 -- Puesto (nro) que más tiempo ha sido una frutería ('FRU') en toda la historia del mercado.
 
-22 -- Calcular el porcentaje de concesiones de cada tipo frente al total de concesiones totales actuales.
+22 -- Porcentaje de puestos de cada tipo (FRU', 'ALI', 'CAR', 'ELE' ó 'ULT') actuales sin contar los vacíos.
+
+23 -- Tasa de sanciones por puesto (numero de sanciones / numero de puestos) por año, entre 2000 y 2010.
+
+24 -- Puesto que ha sido más tipos de establecimientos distintos (FRU', 'ALI', 'CAR', 'ELE' ó 'ULT') a lo largo de la historia del mercado.
