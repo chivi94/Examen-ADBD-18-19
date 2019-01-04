@@ -172,6 +172,15 @@ WHERE T.dni = C.dni AND
       S.fecha < DATE('2011-1-1')
 ORDER BY S.fecha;
 
+-- Otra Forma --
+SELECT T.nombre, S.ref, S.fecha
+FROM Titular T, Concesion C, Sancion S
+WHERE T.dni = C.dni AND
+      C.cod = S.cod AND
+      EXTRACT(YEAR FROM S.fecha)>= 2000 AND
+      EXTRACT(YEAR FROM S.fecha)< 2011
+ORDER BY S.fecha;
+
 -- 13 --
 WITH sancionesTitular AS(
     SELECT T.dni, COUNT(*) AS numSanciones
