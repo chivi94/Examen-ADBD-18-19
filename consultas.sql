@@ -195,6 +195,12 @@ FROM Titular T
 WHERE T.dni NOT IN (SELECT ST.dni
                        FROM sancionesTitular ST);
 
+-- Otra forma --
+SELECT *
+FROM titular T
+WHERE T.dni NOT IN (SELECT C.dni 
+                    FROM concesion C NATURAL JOIN sancion S);
+
 -- 14 --
 SELECT T.nombre, SUM(S.cantidad) as total
 FROM titular T, concesion C, sancion S
