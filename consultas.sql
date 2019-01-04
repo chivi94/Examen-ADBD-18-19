@@ -220,6 +220,16 @@ SELECT C.cod, C.fechaF - C.fechaI AS Duracion
 FROM Concesion C
 WHERE C.fechaF - C.fechaI = (SELECT MAX(C2.fechaF - C2.fechaI)
                              FROM Concesion C2);
+
+-- Otra forma --
+WITH Duracion AS (SELECT C.cod, C.fechaF - C.fechaI as dur
+                  FROM concesion C
+                  WHERE C.fechaF IS NOT NULL)
+
+SELECT *
+FROM Duracion D
+WHERE D.dur >= ALL (SELECT D2.dur FROM Duracion D2);
+
 -- 17 --
 WITH NumInf AS (SELECT DISTINCT C.dni AS dni, COUNT(*) as numI
                 FROM concesion C NATURAL JOIN sancion S
