@@ -7,7 +7,7 @@
 
 4 -- Número de licencias que ha tenido cada puesto, sin incluir las activas.
 
-5 -- Titulares (nombre) actuales sin ninguna sanción.
+5 -- Titulares (nombre) actuales sin ninguna sanción en sus concesiones actuales.
 
 6 -- Los 5 titulares actuales (nombre) con más sanciones.
 
