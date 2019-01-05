@@ -172,6 +172,15 @@ WHERE T.dni = C.dni AND
       S.fecha < DATE('2011-1-1')
 ORDER BY S.fecha;
 
+-- Otra Forma --
+SELECT T.nombre, S.ref, S.fecha
+FROM Titular T, Concesion C, Sancion S
+WHERE T.dni = C.dni AND
+      C.cod = S.cod AND
+      EXTRACT(YEAR FROM S.fecha)>= 2000 AND
+      EXTRACT(YEAR FROM S.fecha)< 2011
+ORDER BY S.fecha;
+
 -- 13 --
 WITH sancionesTitular AS(
     SELECT T.dni, COUNT(*) AS numSanciones
@@ -185,6 +194,12 @@ SELECT T.nombre
 FROM Titular T
 WHERE T.dni NOT IN (SELECT ST.dni
                        FROM sancionesTitular ST);
+
+-- Otra forma --
+SELECT *
+FROM titular T
+WHERE T.dni NOT IN (SELECT C.dni 
+                    FROM concesion C NATURAL JOIN sancion S);
 
 -- 14 --
 SELECT T.nombre, SUM(S.cantidad) as total
@@ -205,6 +220,16 @@ SELECT C.cod, C.fechaF - C.fechaI AS Duracion
 FROM Concesion C
 WHERE C.fechaF - C.fechaI = (SELECT MAX(C2.fechaF - C2.fechaI)
                              FROM Concesion C2);
+
+-- Otra forma --
+WITH Duracion AS (SELECT C.cod, C.fechaF - C.fechaI as dur
+                  FROM concesion C
+                  WHERE C.fechaF IS NOT NULL)
+
+SELECT *
+FROM Duracion D
+WHERE D.dur >= ALL (SELECT D2.dur FROM Duracion D2);
+
 -- 17 --
 WITH NumInf AS (SELECT DISTINCT C.dni AS dni, COUNT(*) as numI
                 FROM concesion C NATURAL JOIN sancion S
