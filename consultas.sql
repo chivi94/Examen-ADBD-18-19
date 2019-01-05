@@ -20,6 +20,25 @@ GROUP BY C.nro;
     -- WHERE c.fechaF IS NOT NULL
 
 -- 5 -- 
+
+--Planteamiento 
+-- Tablas base necesarias Sancion, Titular y Concesion 
+-- dni IN ( (dnis de titulares actules) - (dnis de titulares con alguna sancion) )
+
+
+-- SQL 
+
+     SELECT T.nombre
+    FROM Titular T 
+    WHERE T.dni IN (SELECT DISTINCT C.dni 
+                    FROM Concesion C 
+                    WHERE C.fechaF IS NULL
+                    EXCEPT 
+                    SELECT DISTINCT C.dni 
+                    FROM Concesion C NATURAL JOIN Sancion S 
+                    WHERE C.fechaF IS NULL);
+
+-- Otra forma --
 WITH sancionesActualesTitular AS(
     SELECT T.dni, COUNT(*) AS numSanciones
     FROM Titular T, Concesion C, Sancion S
@@ -52,29 +71,27 @@ WHERE c.fechaf IS NULL AND c.cod NOT IN (SELECT s.cod
 					 FROM Sancion s);
 
 -- 6 --
-    -- * Planteamiento
+   
+--Planteamiento 
+    -- Tablas base necesarias: Titular, Concesion, Sancion
+    -- Titulares actuales -> Concesion.fechaF IS NULL 
+    -- Tabla temporal TitularSanciones : dni | nsan (número de sanciones)
+    -- Comparar las tuplas de TitularSanciones entre sí y seleccionar aquellas tuplas para las que existan 
+    -- menos de 5 tuplas con nsan mayor que el suyo.
 
-        -- ConcActivas : Concesiones con fechaF IS null
-        -- Nsanciones : COUNT(*) Titular con dni = ConcActivas.dni, Sanciones con cod = ConcActivas.cod , GRUOP BY dni
-        -- Comparar Nsanciones con Nsanciones y quedarse con las tuplas que verifiquen que el número de tuplas con mas sanciones
-        -- es menor que 5.
+--SQL 
 
-    -- * SQL 
+    WITH TitularSanciones AS (SELECT DISTINCT C.dni, COUNT(*) as nsan 
+                                FROM Concesion C NATURAL JOIN Sancion S 
+                                WHERE C.fechaF IS NULL 
+                                GROUP BY C.dni)
+        
+    SELECT T.nombre, TS.nsan
+    FROM Titular T NATURAL JOIN  TitularSanciones TS 
+    WHERE 5 > (SELECT COUNT(*) 
+                FROM TitularSanciones TS2 
+                WHERE TS2.nsan > TS.nsan);
 
-    WITH ConcActivas AS (SELECT * 
-                         FROM Concesion C 
-                         WHERE C.fechaF IS null),
-
-    Nsanciones AS (SELECT T.dni,T.nombre, COUNT(*) as nsan
-                   FROM Titular T, ConcActivas CA, Sancion S 
-                   WHERE T.dni = CA.dni AND S.cod = CA.cod
-                   GROUP BY T.dni)
-                
-    SELECT Ns.nombre, Ns.nsan
-    FROM Nsanciones Ns 
-    WHERE 5 > (SELECT COUNT(*)
-               FROM Nsanciones Ns2
-               WHERE Ns2.nsan > Ns.nsan);
 
 -- 6 otra version --
     WITH sancionesTitular AS(
@@ -106,7 +123,7 @@ WHERE c.fechaf IS NULL AND c.cod NOT IN (SELECT s.cod
     ORDER BY C.nro DESC, C.fechaI ASC;
                                                          
 -- 8 --
-SELECT T.nombre,COUNT(*) AS num_sanciones
+SELECT T.nombre, COUNT(*) AS num_sanciones
 FROM Titular T
 	JOIN Concesion C ON T.dni = C.dni
 	JOIN Sancion S ON C.cod = S.cod
@@ -121,25 +138,22 @@ FROM concesion C NATURAL JOIN sancion S
 WHERE EXTRACT(YEAR FROM S.fecha) = 2011;
 
 -- Con el nombre --
-SELECT T.nombre,C.dni, S.ref, S.fecha,S.cantidad
+SELECT T.nombre, C.dni, S.ref, S.fecha, S.cantidad
 FROM titular T, concesion C, sancion S
 WHERE T.dni = C.dni AND C.cod = S.cod AND
       EXTRACT(YEAR FROM S.fecha) = 2011;
 
 -- 9 --
 WITH SancionesPuesto AS (
-	SELECT C.nro,COUNT(*) as num_sanciones
+	SELECT C.nro, COUNT(*) as num_sanciones
 	FROM concesion C NATURAL JOIN sancion S
 	GROUP BY C.nro
 )
 SELECT SP.nro, SP.num_sanciones
 FROM SancionesPuesto SP
-WHERE
-	SP.num_sanciones >= ALL(
+WHERE  SP.num_sanciones >= ALL(
 		SELECT SP2.num_sanciones
-		FROM SancionesPuesto SP2
-	)
-;
+		FROM SancionesPuesto SP2);
 							 
 -- 10 --
 WITH NPuestosTit AS( SELECT C.dni, COUNT(DISTINCT C.nro) as npt
