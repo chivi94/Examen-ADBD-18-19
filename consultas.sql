@@ -210,8 +210,8 @@ WHERE T.dni NOT IN (SELECT ST.dni
                        FROM sancionesTitular ST);
 
 -- Otra forma --
-SELECT *
-FROM titular T
+SELECT T.nombre
+FROM Titular T
 WHERE T.dni NOT IN (SELECT C.dni 
                     FROM concesion C NATURAL JOIN sancion S);
 
@@ -393,3 +393,16 @@ WITH NumTiposPuesto AS (SELECT C.nro, COUNT(DISTINCT C.tipo) as ntipos
 SELECT NTP.nro, NTP.ntipos
 FROM NumTiposPuesto NTP 
 WHERE NTP.ntipos >=ALL (SELECT NTP2.ntipos FROM NumTiposPuesto NTP2);
+
+-- 25 --
+
+--Planteamiento 
+    --Tablas base necesarias: Concesion, Titular 
+    -- Titulares con dni IN (dnis de titulares actuales) y NOT IN(dnis de titulares de una frutería)
+
+-- SQL 
+
+SELECT T.nombre 
+FROM Titular T 
+WHERE T.dni IN (SELECT DISTINCT C2.dni FROM Concesion C2 WHERE C2.fechaF IS NULL) AND 
+      T.dni NOT IN (SELECT DISTINCT C.dni FROM Concesion C WHERE C.tipo='FRU');
