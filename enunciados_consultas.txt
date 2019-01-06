@@ -50,3 +50,5 @@
 23 -- Tasa de sanciones por puesto (numero de sanciones / numero de puestos) por año, entre 2000 y 2010.
 
 24 -- Puesto que ha sido más tipos de establecimientos distintos (FRU', 'ALI', 'CAR', 'ELE' ó 'ULT') a lo largo de la historia del mercado.
+
+25 -- Titulares(nombre) actuales que nunca en la historia del mercado  han sido titulares de una frutería 'FRU'
