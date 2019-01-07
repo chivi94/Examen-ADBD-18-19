@@ -253,6 +253,12 @@ WITH NumInf AS (SELECT DISTINCT C.dni AS dni, COUNT(*) as numI
 SELECT T.nombre, NI.dni,NI.numI
 FROM titular T NATURAL JOIN NumInf NI;
 
+-- Otra forma --
+SELECT DISTINCT T.*, COUNT(*) AS numInfracciones
+FROM titular T, concesion C, sancion S
+WHERE T.dni = C.dni AND C.cod = S.cod
+GROUP BY T.dni
+HAVING COUNT(*) >= 2;
 
 -- 18 --
 -- Planteamiento 
