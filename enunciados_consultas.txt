@@ -52,3 +52,6 @@
 24 -- Puesto que ha sido más tipos de establecimientos distintos (FRU', 'ALI', 'CAR', 'ELE' ó 'ULT') a lo largo de la historia del mercado.
 
 25 -- Titulares(nombre) actuales que nunca en la historia del mercado  han sido titulares de una frutería 'FRU'
+
+26 -- Tipo puesto, numero, porcentaje del total ( sólo los puestos actuales). Contar también los puestos vacíos con tipo = 'VACIO.
+      Los tipos de puesto son: FRU', 'ALI', 'CAR', 'ELE' ó 'ULT'.
