@@ -412,3 +412,16 @@ SELECT T.nombre
 FROM Titular T 
 WHERE T.dni IN (SELECT DISTINCT C2.dni FROM Concesion C2 WHERE C2.fechaF IS NULL) AND 
       T.dni NOT IN (SELECT DISTINCT C.dni FROM Concesion C WHERE C.tipo='FRU');
+
+
+-- 26 --
+
+SELECT C.tipo, COUNT(*) AS numero, COUNT(*) * 100.00 / (SELECT COUNT(*) FROM Puesto P) AS porcentaje 
+FROM Concesion C 
+WHERE C.fechaF IS NULL 
+GROUP BY C.tipo 
+UNION 
+SELECT 'VACIO' AS tipo, COUNT(*) as numero, COUNT(*) * 100.00 / (SELECT COUNT(*) FROM Puesto P) AS porcentaje 
+FROM Puesto P 
+WHERE P.nro NOT IN(SELECT C.nro FROM Concesion C WHERE C.fechaF IS NULL)
+ORDER BY numero;
